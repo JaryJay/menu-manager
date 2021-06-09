@@ -8,15 +8,15 @@ public class SolidFoodItem extends FoodItem {
 
 	@Override
 	public String toString() {
-		return name + "\n======================="
-				+ "Amount:       " + amount + "g\n"
-				+ "Calories:     " + calories + "g\n"
-				+ "Carbohydrates:" + carbohydrates + "g\n"
-				+ "Proteins:     " + proteins + "g\n"
-				+ "Fat:          " + fat + "g\n"
-				+ "Sodium:       " + sodium + "mg\n"
-				+ "Sugar:        " + sugar + "g\n"
-				+ "Price:        " + '$' + price;
+		return name + "\n=======================\n"
+				+ "Amount:        " + amount + "g\n"
+				+ "Calories:      " + calories + "g\n"
+				+ "Carbohydrates: " + carbohydrates + "g\n"
+				+ "Proteins:      " + proteins + "g\n"
+				+ "Fat:           " + fat + "g\n"
+				+ "Sodium:        " + sodium + "mg\n"
+				+ "Sugar:         " + sugar + "g\n"
+				+ "Price:         " + '$' + price;
 	}
 
 }

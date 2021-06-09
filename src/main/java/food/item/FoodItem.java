@@ -1,6 +1,6 @@
 package food.item;
 
-public class FoodItem {
+public abstract class FoodItem {
 
 	protected String name;
 	protected float amount;
