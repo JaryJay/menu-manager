@@ -1,13 +1,12 @@
 package app;
 
-import java.util.prefs.BackingStoreException;
-
-import food.FoodItemLoader;
+import gui.MenuManagerGui;
 
 public class MenuManagerApp {
 
-	public static void main(String[] args) throws BackingStoreException {
-		new FoodItemLoader().getFoodItems();
+	public static void main(String[] args) {
+		MenuManagerGui menuManagerGui = new MenuManagerGui();
+		menuManagerGui.run();
 	}
 
 }
