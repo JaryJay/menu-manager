@@ -1,5 +1,6 @@
 package gui;
 
+import static java.io.File.separator;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
@@ -13,6 +14,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -49,7 +51,7 @@ public class GuiLogicHandler {
 	private JTextPane nutritionFactsTextPane;
 	private Object[] columnNames = { "Name", "Amount", "Calories", "Carbohydrates", "Proteins", "Fat", "Sodium", "Sugar", "Price" };
 
-	public void addToolButtonActionListeners(JButton newMenuButton, JButton saveMenuButton, JButton openMenuButton,
+	public void addToolButtonActionListeners(JButton newMenuButton, JButton renameMenuButton, JButton saveMenuButton, JButton openMenuButton,
 			JButton addFoodItemToMenuButton, JButton removeFoodItemFromMenuButton,
 			JList<String> menuList, JTextPane nutritionFactsTextPane) {
 
@@ -73,6 +75,28 @@ public class GuiLogicHandler {
 				}
 			}
 		});
+		renameMenuButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (currentSelected == null) {
+					JOptionPane.showMessageDialog(renameMenuButton, "Open or generate a food menu first.", "Error", ERROR_MESSAGE);
+					return;
+				}
+				String name = JOptionPane.showInputDialog(newMenuButton, "Menu name", currentSelected.getName());
+				if (name != null) {
+					while (name.isEmpty() || FoodMenuLoader.instance().foodMenuExists(name)) {
+						name = JOptionPane.showInputDialog(newMenuButton, "Menu name\nInvalid name or menu already exists", name);
+						if (name == null) {
+							return;
+						}
+					}
+					FoodMenuLoader.instance().deleteFoodMenu(currentSelected.getName());
+					currentSelected.setName(name);
+					saveCurrentSelected();
+					updateMenuList();
+				}
+			}
+		});
 		saveMenuButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -80,7 +104,7 @@ public class GuiLogicHandler {
 				FoodMenuLoader instance = FoodMenuLoader.instance();
 				if (currentSelected != null) {
 					instance.saveFoodMenu(currentSelected);
-					String message = "Saved to " + instance.getMenuSaveLocation() + currentSelected.getName() + ".txt";
+					String message = "Saved to " + instance.getMenuSaveDirectory() + separator + currentSelected.getName() + ".txt";
 					JOptionPane.showMessageDialog(saveMenuButton, message, "Info", INFORMATION_MESSAGE);
 				}
 			}
@@ -88,14 +112,19 @@ public class GuiLogicHandler {
 		openMenuButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser jf = new JFileChooser(FoodMenuLoader.instance().getMenuSaveLocation());
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+				JFileChooser jf = new JFileChooser(FoodMenuLoader.instance().getMenuSaveDirectory());
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt files", "txt", "text");
 				jf.setFileFilter(filter);
 				int result = jf.showOpenDialog(openMenuButton);
 				if (result == JFileChooser.APPROVE_OPTION) {
 					saveCurrentSelected();
-					currentSelected = FoodMenuLoader.instance().loadFoodMenu(jf.getSelectedFile().getAbsolutePath());
-					updateMenuList();
+					try {
+						currentSelected = FoodMenuLoader.instance().loadFoodMenu(jf.getSelectedFile().getAbsolutePath());
+						updateMenuList();
+					} catch (RuntimeException ex) {
+						ex.printStackTrace();
+						JOptionPane.showMessageDialog(openMenuButton, "Could not open file.", "Error", ERROR_MESSAGE);
+					}
 				}
 			}
 		});
@@ -122,7 +151,7 @@ public class GuiLogicHandler {
 							currentSelected.add(selectedIndex, selectedFoodItem);
 							updateMenuList();
 						} else {
-							JOptionPane.showMessageDialog(addFoodItemToMenuButton, "Food item already in menu.", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(addFoodItemToMenuButton, "Food item already in menu.", "Error", ERROR_MESSAGE);
 						}
 					}
 				}
@@ -131,19 +160,25 @@ public class GuiLogicHandler {
 		removeFoodItemFromMenuButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				if (currentSelected != null) {
-					int selectedIndex = menuList.getSelectedIndex();
-					if (selectedIndex != -1) {
-						currentSelected.remove(selectedIndex);
+					int[] selectedIndices = menuList.getSelectedIndices();
+					if (selectedIndices.length > 0) {
+						for (int i = selectedIndices.length - 1; i >= 0; i--) {
+							int j = selectedIndices[i];
+							currentSelected.remove(j);
+						}
 						updateMenuList();
+						menuList.setSelectedIndex(selectedIndices[selectedIndices.length - 1]);
 					} else {
 						JOptionPane.showMessageDialog(removeFoodItemFromMenuButton, "No selected food item in menu.", "Error", ERROR_MESSAGE);
 					}
+				} else {
+					JOptionPane.showMessageDialog(removeFoodItemFromMenuButton, "Open or generate a food menu first.", "Error", ERROR_MESSAGE);
 				}
 			}
 		});
 		new MenuListListenerHandler().addMouseListeners(menuList);
+
 	}
 
 	public void addGenerateMenuButtonActionListeners(JButton generateMenuButton) {
@@ -153,20 +188,11 @@ public class GuiLogicHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveCurrentSelected();
-				currentSelected = foodmenuGenerator.generateFoodMenu();
+				currentSelected = foodmenuGenerator.generateFoodMenu(currentSelected != null ? currentSelected.getName() : "Generated");
 				updateMenuList();
 			}
 
 		});
-	}
-
-	public void addSettingsButtonActionListeners(JButton settingsButton) {
-		Object[] message = {};
-		int c = JOptionPane.showConfirmDialog(settingsButton, message, "Settings", OK_CANCEL_OPTION, INFORMATION_MESSAGE);
-		if (c == JOptionPane.OK_OPTION) {
-
-		}
 	}
 
 	public void addEditFoodItemsButtonActionListeners(JButton switchToFoodItemsPageButton, JPanel contentPane) {
@@ -401,7 +427,8 @@ public class GuiLogicHandler {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CardLayout layout = (CardLayout) contentPane.getLayout();
-				layout.next(contentPane);
+//				layout.
+				layout.previous(contentPane);
 				FoodItemLoader.instance().saveFoodItems();
 			}
 
@@ -411,14 +438,14 @@ public class GuiLogicHandler {
 			public void actionPerformed(ActionEvent e) {
 				if (FoodItemLoader.instance().noChangesExist()) {
 					CardLayout layout = (CardLayout) contentPane.getLayout();
-					layout.next(contentPane);
+					layout.previous(contentPane);
 					return;
 				}
 				int c = JOptionPane.showConfirmDialog(cancelEditFoodItemsButton, "You have unsaved changes."
 						+ "\nAre you sure you want to discard your changes?", "Warning", YES_NO_OPTION, WARNING_MESSAGE);
 				if (c == YES_OPTION) {
 					CardLayout layout = (CardLayout) contentPane.getLayout();
-					layout.next(contentPane);
+					layout.previous(contentPane);
 					FoodItemLoader.instance().revertChanges();
 					List<FoodItem> foodItemsBuffer = FoodItemLoader.instance().getFoodItemsBuffer();
 					DefaultTableModel model = (DefaultTableModel) foodItemsTable.getModel();
@@ -429,6 +456,87 @@ public class GuiLogicHandler {
 					}
 					model.setDataVector(foodItemsData, columnNames);
 				}
+			}
+		});
+	}
+
+	public void addSettingsButtonActionListeners(JButton settingsButton, JPanel contentPane, JTextField foodItemsSaveLocationTextField, JTextField menusSaveLocationTextField) {
+		settingsButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CardLayout layout = (CardLayout) contentPane.getLayout();
+				layout.previous(contentPane);
+				foodItemsSaveLocationTextField.setText(FoodItemLoader.instance().getFoodItemsSaveLocation());
+				menusSaveLocationTextField.setText(FoodMenuLoader.instance().getMenuSaveDirectory());
+			}
+		});
+	}
+
+	public void addSettingsButtonsActionListeners(JTextField foodItemsSaveLocationTextField, JButton browseFoodItemsSaveLocationButton,
+			JTextField menusSaveLocationTextField, JButton browseMenusSaveLocationButton) {
+		browseFoodItemsSaveLocationButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser jf = new JFileChooser(FoodMenuLoader.instance().getMenuSaveDirectory());
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt files", "txt");
+				jf.setFileFilter(filter);
+				int result = jf.showOpenDialog(browseFoodItemsSaveLocationButton);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					String absolutePath = jf.getSelectedFile().getAbsolutePath();
+					foodItemsSaveLocationTextField.setText(absolutePath);
+				}
+			}
+		});
+		browseMenusSaveLocationButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser jf = new JFileChooser(FoodMenuLoader.instance().getMenuSaveDirectory());
+				jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int result = jf.showOpenDialog(browseMenusSaveLocationButton);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					String absolutePath = jf.getSelectedFile().getAbsolutePath();
+					menusSaveLocationTextField.setText(absolutePath);
+				}
+			}
+		});
+	}
+
+	public void addExitSettingsButtonsActionListeners(JTextField foodItemsSaveLocationTextField, JTextField menusSaveLocationTextField,
+			JButton applyAndCloseSettingsButton, JButton cancelSettingsButton, JPanel contentPane) {
+		applyAndCloseSettingsButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String foodItemsSaveLocation = foodItemsSaveLocationTextField.getText();
+				String menusSaveLocation = menusSaveLocationTextField.getText();
+				try {
+					File foodItemsSaveFile = new File(foodItemsSaveLocation);
+					if (!foodItemsSaveFile.exists()) {
+						JOptionPane.showMessageDialog(applyAndCloseSettingsButton, "Invalid food items save location.", "Error", ERROR_MESSAGE);
+						return;
+					}
+					File menusSaveFile = new File(menusSaveLocation);
+					if (!menusSaveFile.exists()) {
+						JOptionPane.showMessageDialog(applyAndCloseSettingsButton, "Invalid menus save location.", "Error", ERROR_MESSAGE);
+						return;
+					}
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(applyAndCloseSettingsButton, "One or more fields were invalid.", "Error", ERROR_MESSAGE);
+				}
+				FoodItemLoader.instance().setFoodItemsSaveLocation(foodItemsSaveLocation);
+				FoodMenuLoader.instance().setMenusSaveLocation(menusSaveLocation);
+				CardLayout layout = (CardLayout) contentPane.getLayout();
+				layout.next(contentPane);
+			}
+		});
+		cancelSettingsButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CardLayout layout = (CardLayout) contentPane.getLayout();
+				layout.next(contentPane);
 			}
 		});
 	}

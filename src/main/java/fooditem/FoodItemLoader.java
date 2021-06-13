@@ -1,5 +1,6 @@
 package fooditem;
 
+import static java.io.File.separator;
 import static menu.FoodMenuLoader.USER_PREFERENCES;
 
 import java.io.BufferedReader;
@@ -71,11 +72,16 @@ public class FoodItemLoader {
 		} catch (NumberFormatException | IOException e) {
 			e.printStackTrace();
 		}
+		foodItemsBuffer.sort((f1, f2) -> f1.getName().compareTo(f2.getName()));
 		originalFoodItems = new ArrayList<>(foodItemsBuffer);
 		return foodItemsBuffer;
 	}
 
-	public void changeFoodItemsSaveLocation(String newPath) {
+	public String getFoodItemsSaveLocation() {
+		return USER_PREFERENCES.get("foodItemsFileLocation", System.getProperty("user.home") + separator + "menuManager" + separator + "foodItems.txt");
+	}
+
+	public void setFoodItemsSaveLocation(String newPath) {
 		USER_PREFERENCES.put("foodItemsFileLocation", newPath);
 		try {
 			USER_PREFERENCES.flush();
@@ -105,30 +111,26 @@ public class FoodItemLoader {
 		if (foodItemsBuffer.equals(originalFoodItems)) {
 			return;
 		} else {
-			boolean nodeExists = false;
-			try {
-				nodeExists = USER_PREFERENCES.nodeExists("");
-			} catch (BackingStoreException e) {
-				e.printStackTrace();
-			}
-			if (nodeExists) {
-				String path = USER_PREFERENCES.get("foodItemsFileLocation", System.getProperty("user.home") + File.separator + "menuManager");
-				try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
-					for (int i = 0; i < foodItemsBuffer.size(); i++) {
-						FoodItem foodItem = foodItemsBuffer.get(i);
-						bw.write(foodItem.getName() + '|' +
-								foodItem.getAmount() + ((foodItem instanceof LiquidFoodItem) ? "mL" : "") + '|' +
-								foodItem.getCalories() + '|' +
-								foodItem.getCarbohydrates() + '|' +
-								foodItem.getProteins() + '|' +
-								foodItem.getFat() + '|' +
-								foodItem.getSodium() + '|' +
-								foodItem.getSugar() + '|' +
-								foodItem.getPrice() + '\n');
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+			try (BufferedWriter bw = new BufferedWriter(new FileWriter(getFoodItemsSaveLocation()))) {
+				for (int i = 0; i < foodItemsBuffer.size(); i++) {
+					FoodItem foodItem = foodItemsBuffer.get(i);
+					bw.write(foodItem.getName() + '|' +
+							foodItem.getAmount() + ((foodItem instanceof LiquidFoodItem) ? "mL" : "") + '|' +
+							foodItem.getCalories() + '|' +
+							foodItem.getCarbohydrates() + '|' +
+							foodItem.getProteins() + '|' +
+							foodItem.getFat() + '|' +
+							foodItem.getSodium() + '|' +
+							foodItem.getSugar() + '|' +
+							foodItem.getPrice() + '\n');
 				}
+				originalFoodItems = new ArrayList<>(foodItemsBuffer);
+				boolean preferencedoesNotExist = USER_PREFERENCES.get("foodItemsFileLocation", "doesNotExist").equals("doesNotExist");
+				if (preferencedoesNotExist) {
+					USER_PREFERENCES.put("foodItemsFileLocation", System.getProperty("user.home") + separator + "menuManager");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		try {
@@ -156,9 +158,8 @@ public class FoodItemLoader {
 	// ======================================
 
 	private BufferedReader externalFileReader() {
-		String path = USER_PREFERENCES.get("foodItemsFileLocation", System.getProperty("user.home") + File.separator + "menuManager");
 		try {
-			return new BufferedReader(new FileReader(new File(path)));
+			return new BufferedReader(new FileReader(new File(getFoodItemsSaveLocation())));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

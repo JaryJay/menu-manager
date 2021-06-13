@@ -1,5 +1,7 @@
 package menu;
 
+import static java.io.File.separatorChar;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,9 +49,9 @@ public class FoodMenuLoader {
 		if (foodMenu == null) {
 			return;
 		}
-		String menuSaveLocation = getMenuSaveLocation();
+		String menuSaveLocation = getMenuSaveDirectory();
 		new File(menuSaveLocation).mkdirs();
-		File file = new File(menuSaveLocation + File.separatorChar + foodMenu.getName() + ".txt");
+		File file = new File(menuSaveLocation + separatorChar + foodMenu.getName() + ".txt");
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
 			for (int i = 0; i < foodMenu.size(); i++) {
 				bw.write(foodMenu.get(i).getName() + '\n');
@@ -59,12 +61,11 @@ public class FoodMenuLoader {
 		}
 	}
 
-	public String getMenuSaveLocation() {
-		String def = USER_PREFERENCES.get("menuSaveLocation", System.getProperty("user.home") + File.separatorChar + "menuManager");
-		return USER_PREFERENCES.get("menuSaveLocation", def);
+	public String getMenuSaveDirectory() {
+		return USER_PREFERENCES.get("menuSaveLocation", System.getProperty("user.home") + separatorChar + "menuManager");
 	}
 
-	public void setMenuSaveLocation(String location) {
+	public void setMenusSaveLocation(String location) {
 		USER_PREFERENCES.put("menuSaveLocation", location);
 		try {
 			USER_PREFERENCES.flush();
@@ -74,7 +75,12 @@ public class FoodMenuLoader {
 	}
 
 	public boolean foodMenuExists(String foodMenuName) {
-		return new File(getMenuSaveLocation() + File.separatorChar + foodMenuName + ".txt").exists();
+		return new File(getMenuSaveDirectory() + separatorChar + foodMenuName + ".txt").exists();
+	}
+
+	public void deleteFoodMenu(String foodMenuName) {
+		File foodMenuFile = new File(getMenuSaveDirectory() + separatorChar + foodMenuName + ".txt");
+		foodMenuFile.delete();
 	}
 
 }

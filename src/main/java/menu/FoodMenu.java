@@ -17,6 +17,14 @@ public class FoodMenu {
 		foodItems = new ArrayList<>();
 	}
 
+	public List<FoodItem> getFoodItems() {
+		return foodItems;
+	}
+
+	public void setFoodItems(List<FoodItem> foodItems) {
+		this.foodItems = foodItems;
+	}
+
 	public String getName() {
 		return name;
 	}

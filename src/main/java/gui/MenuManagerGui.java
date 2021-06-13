@@ -24,14 +24,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
 
 public class MenuManagerGui {
 
@@ -67,6 +71,19 @@ public class MenuManagerGui {
 	private JSeparator nutritionFactsSeparator;
 	private JPanel editFoodItemsPage;
 	private JButton editFoodItemButton;
+	private JPanel settingsPage;
+	private JPanel settingsContainer;
+	private JPanel settingsExitButtonsContainer;
+	private JPanel settingsPanel;
+	private JLabel foodItemsSettingLabel;
+	private JTextField foodItemsSaveLocationTextField;
+	private JButton browseFoodItemsSaveLocationButton;
+	private JLabel menuSettingLabel;
+	private JTextField menusSaveLocationTextField;
+	private JButton browseMenusSaveLocationButton;
+	private JButton applyAndCloseSettingsButton;
+	private JButton cancelSettingsButton;
+	private JButton renameMenuButton;
 
 	/**
 	 * Create the frame.
@@ -97,7 +114,7 @@ public class MenuManagerGui {
 	private void initComponents() {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds(100, 0, 1070, 749);
+		frame.setBounds(100, 0, 1088, 864);
 		contentPane = new JPanel();
 		contentPane.setBorder(null);
 		frame.setContentPane(contentPane);
@@ -110,7 +127,7 @@ public class MenuManagerGui {
 		toolsContainer = new JPanel();
 		toolsContainer.setBorder(null);
 		toolsContainer.setPreferredSize(new Dimension(120, 10));
-		toolsContainer.setBackground(new Color(51, 51, 51));
+		toolsContainer.setBackground(new Color(20, 20, 20));
 		manageMenusPage.add(toolsContainer, BorderLayout.WEST);
 		toolsContainer.setLayout(new BorderLayout(0, 0));
 
@@ -120,24 +137,32 @@ public class MenuManagerGui {
 		toolButtonsContainer.setOpaque(false);
 		toolButtonsContainer.setPreferredSize(new Dimension(100, 430));
 
+		Color toolButtonColor = new Color(204, 211, 217);
 		newMenuButton = new JButton("New");
 		newMenuButton.setPreferredSize(new Dimension(100, 100));
 		newMenuButton.setOpaque(true);
 		newMenuButton.setBorderPainted(false);
-		newMenuButton.setBackground(new Color(122, 131, 153));
+		newMenuButton.setBackground(toolButtonColor);
 		toolButtonsContainer.add(newMenuButton);
+
+		renameMenuButton = new JButton("Rename");
+		renameMenuButton.setPreferredSize(new Dimension(100, 100));
+		renameMenuButton.setOpaque(true);
+		renameMenuButton.setBorderPainted(false);
+		renameMenuButton.setBackground(new Color(204, 211, 217));
+		toolButtonsContainer.add(renameMenuButton);
 
 		saveMenuButton = new JButton("Save");
 		saveMenuButton.setPreferredSize(new Dimension(100, 100));
 		saveMenuButton.setOpaque(true);
 		saveMenuButton.setBorderPainted(false);
-		saveMenuButton.setBackground(new Color(122, 131, 153));
+		saveMenuButton.setBackground(toolButtonColor);
 		toolButtonsContainer.add(saveMenuButton);
 
 		openMenuButton = new JButton("Open");
 		openMenuButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		toolButtonsContainer.add(openMenuButton);
-		openMenuButton.setBackground(new Color(122, 131, 153));
+		openMenuButton.setBackground(toolButtonColor);
 		openMenuButton.setOpaque(true);
 		openMenuButton.setBorderPainted(false);
 		openMenuButton.setPreferredSize(new Dimension(100, 100));
@@ -148,7 +173,7 @@ public class MenuManagerGui {
 		addFoodItemToMenuButton.setPreferredSize(new Dimension(100, 100));
 		addFoodItemToMenuButton.setOpaque(true);
 		addFoodItemToMenuButton.setBorderPainted(false);
-		addFoodItemToMenuButton.setBackground(new Color(122, 131, 153));
+		addFoodItemToMenuButton.setBackground(toolButtonColor);
 
 		removeFoodItemFromMenuButton = new JButton("Remove");
 		removeFoodItemFromMenuButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -156,7 +181,7 @@ public class MenuManagerGui {
 		removeFoodItemFromMenuButton.setPreferredSize(new Dimension(100, 100));
 		removeFoodItemFromMenuButton.setOpaque(true);
 		removeFoodItemFromMenuButton.setBorderPainted(false);
-		removeFoodItemFromMenuButton.setBackground(new Color(122, 131, 153));
+		removeFoodItemFromMenuButton.setBackground(toolButtonColor);
 
 		separator = new JSeparator();
 		toolButtonsContainer.add(separator);
@@ -169,7 +194,7 @@ public class MenuManagerGui {
 		generateMenuButton.setPreferredSize(new Dimension(100, 100));
 		generateMenuButton.setOpaque(true);
 		generateMenuButton.setBorderPainted(false);
-		generateMenuButton.setBackground(new Color(122, 131, 153));
+		generateMenuButton.setBackground(toolButtonColor);
 
 		settingsButtonContainer = new JPanel();
 		settingsButtonContainer.setPreferredSize(new Dimension(10, 60));
@@ -197,6 +222,7 @@ public class MenuManagerGui {
 
 		menuScrollPane = new JScrollPane();
 		GridBagConstraints gbc_menuScrollPane = new GridBagConstraints();
+		gbc_menuScrollPane.weightx = 0.4;
 		gbc_menuScrollPane.insets = new Insets(0, 0, 0, 5);
 		gbc_menuScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_menuScrollPane.gridx = 0;
@@ -302,18 +328,78 @@ public class MenuManagerGui {
 		cancelEditFoodItemsButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		cancelEditFoodItemsButton.setPreferredSize(new Dimension(150, 30));
 		exitFoodItemsEditorButtonsContainer.add(cancelEditFoodItemsButton);
+
+		settingsPage = new JPanel();
+		contentPane.add(settingsPage, "name_14071924956900");
+		settingsPage.setLayout(new BorderLayout(0, 0));
+
+		settingsContainer = new JPanel();
+		settingsContainer.setBorder(new CompoundBorder(new EmptyBorder(50, 50, 50, 50),
+				new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Settings", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0))));
+		settingsPage.add(settingsContainer, BorderLayout.CENTER);
+
+		settingsPanel = new JPanel();
+		settingsPanel.setBorder(new EmptyBorder(50, 0, 0, 0));
+		settingsPanel.setPreferredSize(new Dimension(480, 200));
+		settingsContainer.add(settingsPanel);
+
+		foodItemsSettingLabel = new JLabel("Food items save location: ");
+		foodItemsSettingLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+		foodItemsSettingLabel.setPreferredSize(new Dimension(160, 25));
+		settingsPanel.add(foodItemsSettingLabel);
+
+		foodItemsSaveLocationTextField = new JTextField();
+		foodItemsSaveLocationTextField.setPreferredSize(new Dimension(190, 25));
+		settingsPanel.add(foodItemsSaveLocationTextField);
+
+		browseFoodItemsSaveLocationButton = new JButton("Browse...");
+		browseFoodItemsSaveLocationButton.setPreferredSize(new Dimension(83, 25));
+		browseFoodItemsSaveLocationButton.setFont(new Font("Arial", Font.PLAIN, 12));
+		settingsPanel.add(browseFoodItemsSaveLocationButton);
+
+		menuSettingLabel = new JLabel("Menus save location: ");
+		menuSettingLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+		menuSettingLabel.setPreferredSize(new Dimension(160, 25));
+		settingsPanel.add(menuSettingLabel);
+
+		menusSaveLocationTextField = new JTextField();
+		menusSaveLocationTextField.setPreferredSize(new Dimension(190, 25));
+		settingsPanel.add(menusSaveLocationTextField);
+
+		browseMenusSaveLocationButton = new JButton("Browse...");
+		browseMenusSaveLocationButton.setPreferredSize(new Dimension(83, 25));
+		browseMenusSaveLocationButton.setFont(new Font("Arial", Font.PLAIN, 12));
+		settingsPanel.add(browseMenusSaveLocationButton);
+
+		settingsExitButtonsContainer = new JPanel();
+		FlowLayout flowLayout_2 = (FlowLayout) settingsExitButtonsContainer.getLayout();
+		flowLayout_2.setAlignment(FlowLayout.RIGHT);
+		settingsPage.add(settingsExitButtonsContainer, BorderLayout.SOUTH);
+
+		applyAndCloseSettingsButton = new JButton("Apply And Close");
+		settingsExitButtonsContainer.add(applyAndCloseSettingsButton);
+		applyAndCloseSettingsButton.setPreferredSize(new Dimension(150, 30));
+
+		cancelSettingsButton = new JButton("Cancel");
+		settingsExitButtonsContainer.add(cancelSettingsButton);
+		cancelSettingsButton.setPreferredSize(new Dimension(150, 30));
 	}
 
 	private void initGuiActions() {
 		GuiLogicHandler guiLogicHandler = new GuiLogicHandler();
-		guiLogicHandler.addToolButtonActionListeners(newMenuButton, saveMenuButton, openMenuButton, addFoodItemToMenuButton, removeFoodItemFromMenuButton, menuList, nutritionFactsTextPane);
+		guiLogicHandler.addToolButtonActionListeners(newMenuButton, renameMenuButton, saveMenuButton, openMenuButton, addFoodItemToMenuButton,
+				removeFoodItemFromMenuButton, menuList, nutritionFactsTextPane);
 		guiLogicHandler.addGenerateMenuButtonActionListeners(generateMenuButton);
-		guiLogicHandler.addSettingsButtonActionListeners(settingsButton);
+		guiLogicHandler.addSettingsButtonActionListeners(settingsButton, contentPane, foodItemsSaveLocationTextField, menusSaveLocationTextField);
 		guiLogicHandler.addEditFoodItemsButtonActionListeners(switchToFoodItemsPageButton, contentPane);
 		foodItemsTable = guiLogicHandler.makeFoodItemsTableActionListeners();
 		foodItemsTableContainer.add(new JScrollPane(foodItemsTable), BorderLayout.CENTER);
 		guiLogicHandler.addFoodItemTableEditButtonsActionListeners(newFoodItemButton, editFoodItemButton, deleteFoodItemButton, foodItemsTable);
 		guiLogicHandler.addExitEditFoodItemsPageActionListeners(saveAndCloseEditFoodItemsButton, cancelEditFoodItemsButton, foodItemsTable, contentPane);
+		guiLogicHandler.addSettingsButtonsActionListeners(foodItemsSaveLocationTextField, browseFoodItemsSaveLocationButton, menusSaveLocationTextField,
+				browseMenusSaveLocationButton);
+		guiLogicHandler.addExitSettingsButtonsActionListeners(foodItemsSaveLocationTextField, menusSaveLocationTextField, applyAndCloseSettingsButton,
+				cancelSettingsButton, contentPane);
 	}
 
 }

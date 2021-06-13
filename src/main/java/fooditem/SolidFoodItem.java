@@ -8,7 +8,7 @@ public class SolidFoodItem extends FoodItem {
 
 	@Override
 	public String toString() {
-		return name + "<br/>"
+		return "<html><pre>" + name + "<br/>"
 				+ "Amount        " + amount + "g<br/>"
 				+ "Calories      " + calories + "g<br/>"
 				+ "Carbohydrates " + carbohydrates + "g<br/>"
@@ -16,7 +16,8 @@ public class SolidFoodItem extends FoodItem {
 				+ "Fat           " + fat + "g<br/>"
 				+ "Sodium        " + sodium + "mg<br/>"
 				+ "Sugar         " + sugar + "g<br/>"
-				+ "Price         " + '$' + price;
+				+ "Price         " + '$' + price
+				+ "</pre></html>";
 	}
 
 	@Override

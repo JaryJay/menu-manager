@@ -9,16 +9,16 @@ Ozery Breakfast Round 2 pieces (per 60 g)|60|170|31|5|3|160|6|6.33
 Kellogs RICE CRISPY treat - snack pack (1 bar 22g)|22|90|17|1|2.5|105|8|0.27
 Dempsters ENGLISH MUFFIN x2|57|130|24|5|1.5|220|1|2.17
 Motts Fruitsations, Snacks various 226g|230|800|190|0|0|300|90|2.47
-Mott's Fruitsations + Veggie Gluten Free Assorted Fruit Flavoured Snacks 226g|230|800|190|0|0|300|90|0.247
+Mott's Fruitsations + Veggie Gluten Free Assorted Fruit Flavoured Snacks|230|800|190|0|0|300|90|0.25
 DADS Oatmeal Cookies (2 pack)|37.5|170|28|2|6|140|13|0.29
 Applesauce Canned Sweetened without Salt|113|77|20|0|0.2|2|17|0.56
 CEREAL - Honey Nut Cheerios, one cup|38.67|146.67|34.67|4|2|213.33|12|0.38
-Quakers instant oatmeal two singles - plain, maple, apple - 1 pack|43|160|33|4|2|260|12|0.327
+Quakers instant oatmeal two singles - plain, maple, apple - 1 pack|43|160|33|4|2|260|12|0.33
 Milk2Go , 1% M.F. Chocolate Partly Skimmed Milk - 1 bottle|200 mL|120|20|7|2|125|19|1.44
 Galil Stuffed Eggplant 480g|480|800|92|8|44|1680|8|3.32
 Alwadi Fava Beans, canned 398mL|398mL|110|19|7|0|370|1|3.21
 Campbells Ready Serve Italian Wedding Soup|250mL|120|14|8|4|780|2|1.97
-MUFFIN, various|58|132|25|5.1|1|246|2|0.745
+MUFFIN, various|58|132|25|5.1|1|246|2|0.75
 Applesauce, various, 113g|113|45|12|0|0|20|10|0.35
 GOLDFISH - snack pack plain|200|90|13|2|3.5|170|0|2.89
 JUICE Box - apple 250mL|250mL|147|20.5|7|4|300|19.8|0.69
@@ -30,7 +30,7 @@ Ozery Frena Bun x 2|70|340|64|14|3|480|4|1.34
 Ozery Mini Rounds, cinnamon, 2 pieces|52|140|28|4|1|140|8|6.33
 WOWBUTTER - 24g single serve|24|300|12|10.5|22.5|150|6|0.33
 KIND Protein BARS x1, various|50|250|17|12|18|135|8|1.76
-CEREAL - Mini Wheats, one cup|71|250|60|6|1.5|10|15|4.7875
+CEREAL - Mini Wheats, one cup|71|250|60|6|1.5|10|15|4.79
 Canned Zwan - 330g|330|780|6|84|48|3000|6|4.27
 Alwadi Fava& Chickpea, canned 398mL|398mL|93.5|16.7|6.5|0.3|240.8|1.6|0.99
 Indomie Noodles - chicken, one pack|35|150|23|4|5|590|2|0.71
@@ -40,7 +40,7 @@ Rice-a-Roni, various - 227g|210|690|153|21|3|3210|6|1.47
 Kirkland Microwave Popcorn - one bag|188|1000|92|12|64|1200|0|0.68
 FUJI APPLE|192|121|29|0.4|0.3|1.9|22|1.32
 PEAR|178|101|27|0.6|0.3|1.8|17|1.15
-APPLE|182|95|25|0.5|0.3|1.8|19|1.1
+APPLE|182|95|25|0.5|0.3|1.8|19|1.10
 PEACH|175|68|17|1.6|0.4|0|15|1.65
 Red Bell PEPPER|100|28|6.7|0.9|0.2|2|4.4|2.11
 MINI CARROTS - one cup|100|35|8.2|0.6|0.1|78|4.8|0.8

@@ -8,15 +8,16 @@ public class LiquidFoodItem extends FoodItem {
 
 	@Override
 	public String toString() {
-		return name + "<br/>"
-				+ "Amount        " + amount + "mL\n"
-				+ "Calories      " + calories + "g\n"
-				+ "Carbohydrates " + carbohydrates + "g\n"
+		return "<html><pre>" + name + "<br/>"
+				+ "Amount        " + amount + "mL<br/>"
+				+ "Calories      " + calories + "g<br/>"
+				+ "Carbohydrates " + carbohydrates + "g<br/>"
 				+ "Proteins      " + proteins + "g<br/>"
 				+ "Fat           " + fat + "g<br/>"
 				+ "Sodium        " + sodium + "mg<br/>"
 				+ "Sugar         " + sugar + "g<br/>"
-				+ "Price         " + '$' + price;
+				+ "Price         " + '$' + price
+				+ "</pre></html>";
 	}
 
 	@Override
